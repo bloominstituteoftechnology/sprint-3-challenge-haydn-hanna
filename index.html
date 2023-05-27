@@ -58,6 +58,42 @@
       // 🧠 Implement a `getAllReversed` method which returns the ints in reverse order
       // ❗ WARNING: except for `getAllReversed`, methods must respect the order of the integers
       // ❗ WARNING: note that none of the methods actually mutate the `ints` property
+      constructor(...ints){
+        this.ints = ints
+      }
+
+      getAll(){
+        return this.ints;  
+      }
+
+      getEvens(){
+        return this.ints.filter(int=>int%2===0);
+      }
+
+      getNegatives(){
+        return this.ints.filter(int=>int<0)
+      }
+
+      getAllSquared(){
+        return this.ints.map(int=>int**2);
+      }
+
+      pop(){
+        return this.ints.pop()
+      }
+
+      push(int){
+        this.ints.push(int);
+        return this.ints;
+      }
+
+      getEveryNth(n){
+        return this.ints.filter((int,index)=>index%n===0)
+      }
+
+      getAllReversed(){
+        return this.ints.reverse()
+      }
 
     }
 
@@ -76,7 +112,40 @@
       //      * When engaging the safety, return "Safety enabled!"
       //      * When disengaging the safety, return "Safety disabled!"
       // 🌟 HINT: instances need to keep track of their maximum capacity as well as their current capacity
+      constructor(projectiles){
+        this.capacity = projectiles;
+        this.ammo = projectiles;
+        this.safetyOn = true;
+      }
+      
+      shoot(){
+        if(this.safetyOn || this.ammo ===0){
+          return 'Click!'
+        }else{
+          this.ammo--;
+          return 'Bang!'
+        }
+      }
 
+      reload(newAmmo){
+        const capacityAvailable = this.capacity - this.ammo;
+        const newAmmoNotValid = newAmmo<=0 || typeof newAmmo!=='number';
+        const tooMuchNewAmmo = newAmmo>capacityAvailable;
+
+        if(newAmmoNotValid)return 'Error reloading!';
+
+        if(tooMuchNewAmmo){
+          this.ammo = this.capacity;
+        }else{
+          this.ammo += newAmmo;
+        }
+        return `${this.ammo} projectiles left!`
+      }
+
+      toggleSafety(){
+        this.safetyOn = !this.safetyOn;
+        return `Safety ${this.safetyOn?'enabled':'disabled'}!`
+      }
     }
 
     // 👉 CHALLENGE 3 EBook
@@ -95,7 +164,25 @@
       //    ebook.next() // returns null
       // 🌟 HINT: remember about the `slice` method of arrays
       // ❗ Feel free to implement `back`, although this is not required nor graded
+      constructor(text, chars){
+        this.bookmark = 0;
+        this.text = text.split('');
+        this.chars = chars;
+      }
+      next(){
+        const bookIsFinished = this.bookmark>this.text.length
+        if(bookIsFinished)return null;
 
+        const nextPage = []
+        for(let i = this.bookmark;i<this.bookmark+this.chars;i++){
+          const hasNextCharacter = i<this.text.length 
+          if(hasNextCharacter)nextPage.push(this.text[i])
+        }
+
+        this.bookmark += this.chars;
+
+        return nextPage.join('')
+      }
     }
 
     // 👉 CHALLENGE 4 AntFarm
@@ -130,7 +217,35 @@
       //      console.log(list) // prints ["a"]
       // 👉 HINT: if you are not feeling confident with map and filter, solve the problem with for loops,
       //      and with the piece of mind of all tests passing, refactor to use map/filter
+        constructor(...ants){
+          this.ants = ants.map(ant=>Object.assign({},{name:ant,health:100}));
+        }
+        work(){
+          const noAnts = this.ants.length===0;
+          if(noAnts)return 'No ants here. Did you work them to death?'
 
+          const message = `${this.ants.length} ants starting work!`
+
+          this.ants.forEach(ant=>ant.health-=20);
+          this.ants = this.ants.filter(ant=>ant.health>0);
+
+          return message;
+        }
+
+        feed(name){
+          let isAntWithTargetName = false;
+
+          this.ants.forEach(ant=>{
+            const thisAntNeedsFeeding = ant.name===name;
+
+            if(thisAntNeedsFeeding){
+              ant.health+=15;
+              isAntWithTargetName = true;
+            }
+          })
+
+          return isAntWithTargetName?'Yum!':`${name} not found!`
+        }
     }
 
     // 🧪 TESTS, do not make any changes below this line ===================
